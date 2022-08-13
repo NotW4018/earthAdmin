@@ -25,25 +25,31 @@ end)
 
 RegisterNetEvent('delete_objects')
 AddEventHandler('delete_objects', function()
-	TriggerClientEvent('notw4018:objects', -1)
+	local xPlayer = ESX.GetPlayerFromId(source)
+	if xPlayer.getGroup() == 'mod' or xPlayer.getGroup() == 'admin' or  xPlayer.getGroup() == 'superadmin' then
+		TriggerClientEvent('notw4018:objects', -1)
+	end
 end)
 
 RegisterNetEvent('delete_peds')
 AddEventHandler('delete_peds', function()
-	TriggerClientEvent('notw4018:peds', -1)
+	if xPlayer.getGroup() == 'mod' or xPlayer.getGroup() == 'admin' or  xPlayer.getGroup() == 'superadmin' then
+		TriggerClientEvent('notw4018:peds', -1)
+	end
 end)
 
 
 RegisterNetEvent('delete_cars')
 AddEventHandler('delete_cars', function()
-	TriggerClientEvent('notw4018:cars', -1)
+	if xPlayer.getGroup() == 'mod' or xPlayer.getGroup() == 'admin' or  xPlayer.getGroup() == 'superadmin' then
+		TriggerClientEvent('notw4018:cars', -1)
+	end
 end)
 
 RegisterNetEvent('bringall')
 AddEventHandler('bringall', function()
 	local players = ESX.GetPlayers()
-    local xPlayer = ESX.GetPlayerFromId(source)
-    local _source = source
+    	local xPlayer = ESX.GetPlayerFromId(source)
 	local playerCoords = xPlayer.getCoords()
 	for i=1, #players, 1 do
 		local xTarget = ESX.GetPlayerFromId(players[i])
@@ -52,11 +58,11 @@ AddEventHandler('bringall', function()
 end)
 
 RegisterCommand('adminmenu', function(source)
-    local player = ESX.GetPlayerFromId(source)
+    local xPlayer = ESX.GetPlayerFromId(source)
   
-    if player.getGroup() == 'mod' or player.getGroup() == 'admin' or  player.getGroup() == 'superadmin' then
+    if xPlayer.getGroup() == 'mod' or xPlayer.getGroup() == 'admin' or xPlayer.getGroup() == 'superadmin' then
 		TriggerClientEvent('notw4018:admin', source)
     else
-      player.showNotification('You dont have permissions!')
+      	xPlayer.showNotification('You dont have permissions!')
     end
 end)
