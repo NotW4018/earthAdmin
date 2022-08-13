@@ -1,9 +1,9 @@
-ESX = nil
+ESX = exports['es_extended']:getSharedObject()
 
-invisible = false
-godmode = false
-ids = false
-run = false
+local invisible = false
+local godmode = false
+local ids = false
+local run = false
 
 
 RegisterNetEvent('notw4018:admin', function()
@@ -226,43 +226,43 @@ RegisterNetEvent(
 
 RegisterNetEvent('notw4018:fixcar')
 AddEventHandler('notw4018:fixcar',function()
-	local kurac = nil
+	local currentVeh = nil
 	if IsPedSittingInAnyVehicle(PlayerPedId()) then
-		 kurac =  GetVehiclePedIsIn(PlayerPedId(),false)
+		currentVeh = GetVehiclePedIsIn(PlayerPedId(),false)
+		if currentVeh then
+	    		SetVehicleFixed(currentVeh)
+	    		SetVehicleDeformationFixed(currentVeh)
+            		ESX.ShowNotification('You repaired the car!')
+		end
 	else 
-        ESX.ShowNotification('You need to be in a car!')
-	end
-	if kurac then
-	    SetVehicleFixed(kurac)
-	    SetVehicleDeformationFixed(kurac)
-        ESX.ShowNotification('You repaired the car!')
+        	ESX.ShowNotification('You need to be in a car!')
 	end
 end)
 
 RegisterNetEvent('notw4018:wash')
 AddEventHandler('notw4018:wash',function()
-	local kurac = nil
+	local currentVeh = nil
 	if IsPedSittingInAnyVehicle(PlayerPedId()) then
-		 kurac =  GetVehiclePedIsIn(PlayerPedId(),false)
+		currentVeh =  GetVehiclePedIsIn(PlayerPedId(),false)
+		if currentVeh then
+			SetVehicleDirtLevelcurrentVehkurac, 0)
+        		ESX.ShowNotification('You cleaned the car!')
+		end
 	else 
-        ESX.ShowNotification('You need to be in a car!')
-	end
-	if kurac then
-		SetVehicleDirtLevel(kurac, 0)
-        ESX.ShowNotification('You cleaned the car!')
+        	ESX.ShowNotification('You need to be in a car!')
 	end
 end)
 
 RegisterNetEvent('notw4018:invisible')
 AddEventHandler('notw4018:invisible', function()
-    if invisible == false then
-        ESX.ShowNotification('Invisible ON!')
-		SetEntityVisible(PlayerPedId(),false)
-		invisible = true
-    else
+    if invisible then
 		SetEntityVisible(PlayerPedId(),true)
 		invisible = false
-        ESX.ShowNotification('Invisible OFF!')
+		ESX.ShowNotification('Invisible OFF!')        
+    else
+	ESX.ShowNotification('Invisible ON!')
+	SetEntityVisible(PlayerPedId(),false)
+	invisible = true
     end
 end)
 
@@ -291,12 +291,12 @@ RegisterNetEvent(
     "notw4018:ids",
     function()
 
-        if not ids then
+        if ids then
+	    ids = false
+            ESX.ShowNotification('ID OFF!')
+        else
             ESX.ShowNotification('ID ON!')
             ids = true
-        else
-            ids = false
-            ESX.ShowNotification('ID OFF!')
         end
     end
 )
@@ -306,34 +306,23 @@ RegisterNetEvent(
 
 CreateThread(function()
 	while true do
-		if not ids then
-			Wait(2000)
-		else
-
+		local sleep = 2000
+		if ids then
+			sleep = 0
 			for _, id in ipairs(GetActivePlayers()) do
 				local loc = GetEntityCoords(GetPlayerPed(id))
-				local loc = vector3(loc.x, loc.y, loc.z + 1.3)
-                local player = PlayerPedId()
-                local health = (GetEntityHealth(player) - 100)
+				loc.z = loc.z + 1.3
+				local player = PlayerPedId()
+                		local health = (GetEntityHealth(player) - 100)
 				if not NetworkIsPlayerTalking(id) then
-					DrawText3D(
-						loc,
-						string.format("~g~[ID: %d ]\n ~p~[PLAYER: %s]\n ~y~[HEALTH: "..health.."]",GetPlayerServerId(id), GetPlayerName(id)), 
-						255,
-						true
-					)
+					DrawText3D(loc, string.format("~g~[ID: %d ]\n ~p~[PLAYER: %s]\n ~y~[HEALTH: "..health.."]",GetPlayerServerId(id), GetPlayerName(id)), 255, true)
 				else
-					DrawText3D(
-						loc,
-                        string.format("~g~[ID: %d ]\n ~p~[🎤 PLAYER: %s]\n ~y~[HEALTH: "..health.."]",GetPlayerServerId(id), GetPlayerName(id)), 
-						255,
-						true
-					)
+					DrawText3D(loc, string.format("~g~[ID: %d ]\n ~p~[🎤 PLAYER: %s]\n ~y~[HEALTH: "..health.."]",GetPlayerServerId(id), GetPlayerName(id)), 255, true)
 				end
-            end
-        end 
-        Wait(0)
-    end
+            		end
+        	end 
+        	Wait(sleep)
+    	end
 end)
 
 function DrawText3D(coords, text, scale2)
@@ -362,21 +351,17 @@ function DrawText3D(coords, text, scale2)
 end
 
 
-RegisterNetEvent(
-    "notw4018:run",
-    function()
-
-        if not run then
-            ESX.ShowNotification('Fast Run ON!')
-            run = true
-            SetRunSprintMultiplierForPlayer(PlayerId(), 1.49)
-        else
+RegisterNetEvent("notw4018:run", function()
+        if run then
             run = false
             SetRunSprintMultiplierForPlayer(PlayerId(), 1.00)
             ESX.ShowNotification('Fast Run OFF!')
+        else
+	    ESX.ShowNotification('Fast Run ON!')
+            run = true
+            SetRunSprintMultiplierForPlayer(PlayerId(), 1.49)
         end
-    end
-)
+end)
 
 
 
@@ -402,16 +387,17 @@ end, false)
 
 
 RegisterNetEvent('notw4018:platechange')
-AddEventHandler('notw4018:platechange', function(tablica)
-	local kurac = nil
+AddEventHandler('notw4018:platechange', function(numPlate)
+	local currentVeh = nil
 	if IsPedSittingInAnyVehicle(PlayerPedId()) then
-		 kurac =  GetVehiclePedIsIn(PlayerPedId(),false)
+		currentVeh =  GetVehiclePedIsIn(PlayerPedId(),false)
+		if currentVeh then
+        		SetVehicleNumberPlateText(currentVeh, numPlate)
+		end
 	else 
-        ESX.ShowNotification('You need to be in a car!')
+       		ESX.ShowNotification('You need to be in a car!')
 	end
-	if kurac then
-        SetVehicleNumberPlateText(kurac, tablica)
-	end
+	
 end)
 
 RegisterNetEvent('notw4018:list')
