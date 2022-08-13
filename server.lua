@@ -1,22 +1,16 @@
-local ESX = nil
-
-TriggerEvent('esx:getSharedObject', function(obj) ESX = obj end)
-
+local ESX = exports['es_extended']:getSharedObject()
 
 ESX.RegisterServerCallback('notw4018:getplayers', function(source, cb)
-	local xPlayers = ESX.GetPlayers()
 	local players  = {}
-
-	for i=1, #xPlayers, 1 do
-		local xPlayer = ESX.GetPlayerFromId(xPlayers[i])
+	for _,xPlayer in pairs(ESX.GetExtendedPlayers())
 		table.insert(players, {
 			source      = xPlayer.source,
 			identifier  = xPlayer.getIdentifier(),
-            name        = GetPlayerName(xPlayers[i]),
+            		name        = GetPlayerName(xPlayers[i]),
 			job         = xPlayer.getJob(),
-            group       = xPlayer.getGroup(),
-            job       = xPlayer.job.label,
-            grade          = xPlayer.job.grade_label,
+            		group       = xPlayer.getGroup(),
+            		job       = xPlayer.job.label,
+            		grade          = xPlayer.job.grade_label,
 		})
 	end
 	cb(players)
@@ -41,13 +35,10 @@ end)
 
 RegisterNetEvent('bringall')
 AddEventHandler('bringall', function()
-	local players = ESX.GetPlayers()
-    local xPlayer = ESX.GetPlayerFromId(source)
-    local _source = source
+    	local xPlayer = ESX.GetPlayerFromId(source)
 	local playerCoords = xPlayer.getCoords()
-	for i=1, #players, 1 do
-		local xTarget = ESX.GetPlayerFromId(players[i])
-		xTarget.setCoords(playerCoords)
+	for _,xPlayer in pairs(ESX.GetExtendedPlayers()) do
+		xPlayer.setCoords(playerCoords)
 	end
 end)
 
